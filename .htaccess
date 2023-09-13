@@ -1,0 +1,33 @@
+# --- Настройка перезаписи ---
+# Включаем перезапись
+RewriteEngine On
+
+# Принудительное использование домена без "www"
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [R=301,L]
+
+# Если запрашиваемый файл или директория не существует, перенаправляем на главную страницу
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ / [L,R=301]
+
+# --- Настройки безопасности ---
+# Запрещаем доступ к .htaccess
+<Files .htaccess>
+    Order allow,deny
+    Deny from all
+</Files>
+
+# --- Настройки оптимизации ---
+# Включаем сжатие Gzip для текстовых файлов
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain text/html text/xml text/css application/xml application/xhtml+xml application/rss+xml application/javascript application/x-javascript
+</IfModule>
+
+# Устанавливаем заголовки кэширования для статических ресурсов
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+</IfModule>
